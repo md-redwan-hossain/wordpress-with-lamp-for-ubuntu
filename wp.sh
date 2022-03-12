@@ -203,9 +203,9 @@ elif [ "$(command -v ufw)" = "" ] && [ "$(command -v apache2)" != "" ] && [ "$(c
   echo "updating ufw rules"
   sudo apt install ufw -y
   sudo ufw enable
-  ufw allow 22/tcp
-  ufw allow 80/tcp
-  ufw allow 443/tcp
+  sudo ufw allow 22/tcp
+  sudo ufw allow 80/tcp
+  sudo ufw allow 443/tcp
   sudo systemctl reload apache2
 
 else
