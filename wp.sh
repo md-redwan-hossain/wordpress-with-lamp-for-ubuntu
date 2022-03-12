@@ -36,11 +36,11 @@ fi
 if [[ "$(grep -iR ondrej/apache2 /etc/apt)" = "" ]]; then
   echo "Checking apache2 PPA status"
   echo " PPA missing so adding it"
-  sudo apt install software-properties-common -y
+  sudo apt install software-properties-common dirmngr apt-transport-https -y
   sudo add-apt-repository ppa:ondrej/apache2 -y
   sudo apt update
 
-elif [[ "$(grep -iR deadsnakes/ppa /etc/apt)" != "" ]]; then
+elif [[ "$(grep -iR ondrej/apache2 /etc/apt)" != "" ]]; then
   echo "PPA already added"
   sudo apt update
 
@@ -49,7 +49,7 @@ else
 fi
 
 #apache install
-if [ "$(command -v apache2)" = "" ]; then
+if [ "$(command -v apache2)" = "" ] && [[ "$(grep -iR ondrej/apache2 /etc/apt)" != "" ]]; then
   echo "Installing Apache"
   sudo apt install apache2 -y
 else
@@ -69,7 +69,7 @@ fi
 if [[ "$(grep -iR ondrej/php /etc/apt)" = "" ]] && [ "$(command -v apache2)" != "" ]; then
   echo "Checking php PPA status"
   echo " PPA missing so adding it"
-  sudo apt install software-properties-common -y
+  sudo apt install software-properties-common dirmngr apt-transport-https -y
   sudo add-apt-repository ppa:ondrej/php -y
   sudo apt update
 
@@ -90,7 +90,7 @@ else
 fi
 
 #mariadb remove
-if [ "$(command -v mariadb)" != "" ] && [ "$(command -v php)" != "" ]; then
+if [ "$(command -v mariadb)" != "" ] && [ "$(command -v apache2)" != "" ] && [ "$(command -v php)" != "" ]; then
   echo "apache found and removing"
   sudo apt purge mariadb-* -y
   sudo apt autoremove -y
@@ -99,9 +99,12 @@ else
 fi
 
 #mariadb install
-if [ "$(command -v mariadb)" = "" ] && [ "$(command -v php)" != "" ]; then
+if [ "$(command -v mariadb)" = "" ] && [ "$(command -v apache2)" != "" ] && [ "$(command -v php)" != "" ]; then
   echo "Installing MariaDB"
   sudo apt install mariadb-server mariadb-client -y
+
+  echo "-> -> -> -> -> You must have to set root password now for securing mariadb"
+  echo "-> -> -> -> -> Ignore the 1st password promt by pressing enter, then press y, then set new password, then choose y for rest of the prompts"
   sudo mysql_secure_installation
 
   echo "Enabling unix socket"
@@ -118,7 +121,7 @@ fi
 
 #wordpress part
 FILE=/var/www/html/index.html
-if [[ -f "$FILE" ]]; then
+if [[ -f "$FILE" ]] && [ "$(command -v apache2)" != "" ] && [ "$(command -v php)" != "" ] && [ "$(command -v mariadb)" != "" ]; then
   echo "$FILE exists."
   sudo rm /var/www/html/index.html
   echo "Removed"
@@ -127,19 +130,31 @@ else
 fi
 
 #cleaning
-read -r -p "Do you want to delete every files in apache root directory (var/www/html)? [y/N] " response
-if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]] || [[ "$response" = "" ]]; then
+if [[ -d /var/www/html ]] && [ "$(command -v apache2)" != "" ] && [ "$(command -v php)" != "" ] && [ "$(command -v mariadb)" != "" ]; then
+  echo "var/www/html exists"
 
-  sudo rm -r /var/www/html/*
+  DIR="/var/www/html"
+  if [ "$(ls -A "$DIR")" ] && [ "$(command -v apache2)" != "" ] && [ "$(command -v php)" != "" ] && [ "$(command -v mariadb)" != "" ]; then
+    echo "$DIR contains files"
+
+    read -r -p "Do you want to delete every files in apache root directory (var/www/html)? [y/n] " response
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]] || [[ "$response" = "" ]]; then
+
+      sudo rm -r /var/www/html/*
+      echo "Ok, deleted"
+    fi
+
+  else
+    echo "$DIR is empty"
+  fi
 
 else
-
-  echo "Ok, old files are not deleted"
-
+  echo "var/www/html doesn't exist"
 fi
 
+#downloading and setting wp
 FILE=/var/www/html
-if [[ -d "$FILE" ]]; then
+if [[ -d "$FILE" ]] && [ "$(command -v apache2)" != "" ] && [ "$(command -v php)" != "" ] && [ "$(command -v mariadb)" != "" ]; then
   echo "$FILE found."
   echo "Installing WordPress"
   sleep 1
@@ -170,7 +185,30 @@ if [[ -d "$FILE" ]]; then
   sudo chmod u=rwX,g=srX,o=rX -R /var/www/html
 
 else
-  echo "$FILE not exists."
+  echo "$FILE not exists, so wp installaion aborted"
+fi
+
+#ufw
+if [ "$(command -v wget)" != "" ] && [ "$(command -v apache2)" != "" ] && [ "$(command -v php)" != "" ] && [ "$(command -v mariadb)" != "" ]; then
+  echo "ufw installed"
+  echo "updating ufw rules"
+  sudo ufw enable
+  sudo ufw allow 22/tcp
+  sudo ufw allow 80/tcp
+  sudo ufw allow 443/tcp
+  sudo systemctl reload apache2
+elif [ "$(command -v wget)" = "" ] && [ "$(command -v apache2)" != "" ] && [ "$(command -v php)" != "" ] && [ "$(command -v mariadb)" != "" ]; then
+  echo "installing ufw"
+  echo "updating ufw rules"
+  sudo apt install ufw -y
+  sudo ufw enable
+  sudo ufw allow 22/tcp
+  sudo ufw allow 80/tcp
+  sudo ufw allow 443/tcp
+  sudo systemctl reload apache2
+
+else
+  echo "ufw installation aborted"
 fi
 
 exit
