@@ -19,3 +19,5 @@
 • `CREATE DATABASE wordpress;`
 
 • `\q`
+
+• *Drop a star if this script helps you*.
