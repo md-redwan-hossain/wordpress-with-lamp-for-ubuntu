@@ -189,7 +189,7 @@ else
 fi
 
 #ufw
-if [ "$(command -v wget)" != "" ] && [ "$(command -v apache2)" != "" ] && [ "$(command -v php)" != "" ] && [ "$(command -v mariadb)" != "" ]; then
+if [ "$(command -v ufw)" != "" ] && [ "$(command -v apache2)" != "" ] && [ "$(command -v php)" != "" ] && [ "$(command -v mariadb)" != "" ]; then
   echo "ufw installed"
   echo "updating ufw rules"
   sudo ufw enable
@@ -197,14 +197,15 @@ if [ "$(command -v wget)" != "" ] && [ "$(command -v apache2)" != "" ] && [ "$(c
   sudo ufw allow 80/tcp
   sudo ufw allow 443/tcp
   sudo systemctl reload apache2
-elif [ "$(command -v wget)" = "" ] && [ "$(command -v apache2)" != "" ] && [ "$(command -v php)" != "" ] && [ "$(command -v mariadb)" != "" ]; then
+
+elif [ "$(command -v ufw)" = "" ] && [ "$(command -v apache2)" != "" ] && [ "$(command -v php)" != "" ] && [ "$(command -v mariadb)" != "" ]; then
   echo "installing ufw"
   echo "updating ufw rules"
   sudo apt install ufw -y
   sudo ufw enable
-  sudo ufw allow 22/tcp
-  sudo ufw allow 80/tcp
-  sudo ufw allow 443/tcp
+  ufw allow 22/tcp
+  ufw allow 80/tcp
+  ufw allow 443/tcp
   sudo systemctl reload apache2
 
 else
