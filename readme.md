@@ -1,4 +1,4 @@
- # ***This script will install Wordpress with Apache2, Php 8, MariaDB, Ufw filewall***.
+ # ***This script will install Wordpress with Apache2, Php 8, MariaDB, Ufw firewall***.
 
 • # Simply run `bash wp.sh` in the terminal.
 
