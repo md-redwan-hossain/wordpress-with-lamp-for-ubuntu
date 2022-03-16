@@ -8,13 +8,13 @@
 
 • Replace `user`  `password`  `wordpress`  with your keywords.
 
-• `mysql -u root -p`
+• `sudo mysql -u root -p`
 
 • `GRANT ALL PRIVILEGES ON *.* TO 'user'@'localhost' IDENTIFIED BY 'password';`
 
 • `\q`
 
-• `mysql -u user -p`
+• `sudo mysql -u user -p`
 
 • `CREATE DATABASE wordpress;`
 
