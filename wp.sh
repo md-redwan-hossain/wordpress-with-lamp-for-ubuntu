@@ -162,7 +162,7 @@ if [[ -d "$FILE" ]] && [ "$(command -v apache2)" != "" ] && [ "$(command -v php)
   echo "downloading wordpress archive to apache directory"
 
   echo "extracting wordpress"
-  sudo tar -zxf /var/www/html/latest.tar.gz -C /var/www/html
+  sudo tar -zvxf /var/www/html/latest.tar.gz -C /var/www/html
   echo "the archive has a folder named wordpress"
 
   sudo mv /var/www/html/wordpress/* /var/www/html
