@@ -91,29 +91,39 @@ fi
 
 #mariadb remove
 if [ "$(command -v mariadb)" != "" ] && [ "$(command -v apache2)" != "" ] && [ "$(command -v php)" != "" ]; then
-  echo "apache found and removing"
+  echo "mariaDB found and removing"
   sudo apt purge mariadb-* -y
   sudo apt autoremove -y
 else
   echo "Everything is good for mariadb"
 fi
 
+#ppa mariaDB
+if [[ "$(grep -iR https://dlm.mariadb.com /etc/apt/)" = "" ]] && [ "$(command -v mariadb)" = "" ] && [ "$(command -v apache2)" != "" ] && [ "$(command -v php)" != "" ]; then
+
+  echo "Checking MariaDB PPA status"
+  echo " PPA missing so adding it"
+  curl -LsS https://r.mariadb.com/downloads/mariadb_repo_setup | sudo bash -s -- --os-type=ubuntu --os-version=focal
+  sudo apt update
+  sudo apt upgrade -y
+
+elif [[ "$(grep -iR https://dlm.mariadb.com /etc/apt/)" != "" ]]; then
+  echo "MariaDB PPA already added"
+  sudo apt update
+
+else
+  echo "Aborted"
+fi
+
 #mariadb install
-if [ "$(command -v mariadb)" = "" ] && [ "$(command -v apache2)" != "" ] && [ "$(command -v php)" != "" ]; then
+if [ "$(command -v mariadb)" = "" ] && [[ "$(grep -iR https://dlm.mariadb.com /etc/apt/)" != "" ]] && [ "$(command -v apache2)" != "" ] && [ "$(command -v php)" != "" ]; then
   echo "Installing MariaDB"
-  sudo apt install mariadb-server mariadb-client -y
+  sudo apt update
+  sudo apt install mariadb-server mariadb-client mariadb-backup -y
 
   echo "-> -> -> -> -> You must have to set root password now for securing mariadb"
-  echo "-> -> -> -> -> Ignore the 1st password promt by pressing enter, then press y, then set new password, then choose y for rest of the prompts"
+  echo "-> -> -> -> -> Make sure to enable Switch to unix_socket authentication"
   sudo mysql_secure_installation
-
-  echo "Enabling unix socket"
-  echo "Enter root password"
-  mysql -u root -p <<-EOF
-  UPDATE mysql.user SET plugin = 'mysql_native_password' WHERE user = 'root' AND plugin = 'unix_socket';
-  FLUSH PRIVILEGES;
-  exit
-EOF
 
 else
   echo "Aborted"
