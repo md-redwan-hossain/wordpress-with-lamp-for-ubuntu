@@ -223,4 +223,15 @@ else
   echo "ufw installation aborted"
 fi
 
+#script remove
+FILE=~/wp.sh
+if [[ -f "$FILE" ]]; then
+  echo "$FILE exists"
+  sudo rm ~/wp.sh
+  echo "$FILE is cleaned"
+
+else
+  echo "$FILE not found"
+fi
+
 exit
