@@ -23,6 +23,15 @@ else
   sudo apt install wget -y
 fi
 
+echo "
+   ##    #####     ##     ####   #    #  ######
+  #  #   #    #   #  #   #    #  #    #  #
+ #    #  #    #  #    #  #       ######  #####
+ ######  #####   ######  #       #    #  #
+ #    #  #       #    #  #    #  #    #  #
+ #    #  #       #    #   ####   #    #  ######
+"
+
 #apache remove
 if [ "$(command -v apache2)" != "" ]; then
   echo "apache found and removing"
@@ -55,6 +64,15 @@ if [ "$(command -v apache2)" = "" ] && [[ "$(grep -iR ondrej/apache2 /etc/apt)" 
 else
   echo "Aborted"
 fi
+
+echo "
+ #####   #    #  #####
+ #    #  #    #  #    #
+ #    #  ######  #    #
+ #####   #    #  #####
+ #       #    #  #
+ #       #    #  #
+"
 
 #php remove
 if [ "$(command -v php)" != "" ] && [ "$(command -v apache2)" != "" ]; then
@@ -89,6 +107,16 @@ else
   echo "Aborted"
 fi
 
+echo "
+                                        ######  ######
+ #    #    ##    #####      #      ##   #     # #     #
+ ##  ##   #  #   #    #     #     #  #  #     # #     #
+ # ## #  #    #  #    #     #    #    # #     # ######
+ #    #  ######  #####      #    ###### #     # #     #
+ #    #  #    #  #   #      #    #    # #     # #     #
+ #    #  #    #  #    #     #    #    # ######  ######
+"
+
 #mariadb remove
 if [ "$(command -v mariadb)" != "" ] && [ "$(command -v apache2)" != "" ] && [ "$(command -v php)" != "" ]; then
   echo "mariaDB found and removing"
@@ -121,13 +149,33 @@ if [ "$(command -v mariadb)" = "" ] && [[ "$(grep -iR https://dlm.mariadb.com /e
   sudo apt update
   sudo apt install mariadb-server mariadb-client mariadb-backup -y
 
-  echo "-> -> -> -> -> You must have to set root password now for securing mariadb"
-  echo "-> -> -> -> -> Make sure to enable Switch to unix_socket authentication"
+  echo "
+   ##     #####   #####  ######  #    #   #####     #     ####   #    #
+  #  #      #       #    #       ##   #     #       #    #    #  ##   #
+ #    #     #       #    #####   # #  #     #       #    #    #  # #  #
+ ######     #       #    #       #  # #     #       #    #    #  #  # #
+ #    #     #       #    #       #   ##     #       #    #    #  #   ##
+ #    #     #       #    ######  #    #     #       #     ####   #    #
+"
+
+  echo "-> -> -> You must have to set root password now for securing mariadb"
+  echo "-> -> -> Make sure to enable Switch to unix_socket authentication"
+  sleep 2
+
   sudo mysql_secure_installation
 
 else
   echo "Aborted"
 fi
+
+echo "
+ #    #   ####   #####   #####   #####   #####   ######   ####    ####
+ #    #  #    #  #    #  #    #  #    #  #    #  #       #       #
+ #    #  #    #  #    #  #    #  #    #  #    #  #####    ####    ####
+ # ## #  #    #  #####   #    #  #####   #####   #            #       #
+ ##  ##  #    #  #   #   #    #  #       #   #   #       #    #  #    #
+ #    #   ####   #    #  #####   #       #    #  ######   ####    ####
+"
 
 #wordpress part
 FILE=/var/www/html/index.html
@@ -198,6 +246,15 @@ if [[ -d "$FILE" ]] && [ "$(command -v apache2)" != "" ] && [ "$(command -v php)
 else
   echo "$FILE not exists, so wp installaion aborted"
 fi
+
+echo "
+ #    #  ######  #    #
+ #    #  #       #    #
+ #    #  #####   #    #
+ #    #  #       # ## #
+ #    #  #       ##  ##
+  ####   #       #    #
+"
 
 #ufw
 if [ "$(command -v ufw)" != "" ] && [ "$(command -v apache2)" != "" ] && [ "$(command -v php)" != "" ] && [ "$(command -v mariadb)" != "" ]; then
