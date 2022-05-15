@@ -1,6 +1,6 @@
  # ***This script will install Wordpress with Apache2, Php 8, MariaDB, UFW firewall***.
 
-• Simply run `wget -P ~ https://raw.githubusercontent.com/redwan-hossain/wordpress-with-lamp-for-ubuntu-20.04/main/wp.sh && bash wp.sh` in the terminal.
+• Clone the repo and enter into the cloned folder then simply run `bash wp.sh` in the terminal.
 
 • Create user and database for wordpress my following commands-
 
