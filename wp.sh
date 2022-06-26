@@ -131,7 +131,7 @@ if [[ "$(grep -iR https://dlm.mariadb.com /etc/apt/)" = "" ]] && [ "$(command -v
 
   echo "Checking MariaDB PPA status"
   echo " PPA missing so adding it"
-  curl -LsS https://r.mariadb.com/downloads/mariadb_repo_setup | sudo bash -s -- --os-type=ubuntu --os-version=focal
+  curl -LsS https://r.mariadb.com/downloads/mariadb_repo_setup | sudo bash -s -- --os-type=ubuntu
   sudo apt update
   sudo apt upgrade -y
 
