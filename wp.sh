@@ -45,7 +45,7 @@ fi
 if [[ "$(grep -iR ondrej/apache2 /etc/apt)" = "" ]]; then
   echo "Checking apache2 PPA status"
   echo " PPA missing so adding it"
-  sudo apt install software-properties-common dirmngr wget curl apt-transport-https -y
+  sudo apt install software-properties-common dirmngr wget gnupg2 ca-certificates curl apt-transport-https -y
   sudo add-apt-repository ppa:ondrej/apache2 -y
   sudo apt update
 
